@@ -1,0 +1,94 @@
+
+*** These modified files were found in JOE when it aborted on Wed Oct  6 10:19:43 2010
+*** JOE was aborted because the terminal closed
+
+*** File 'testpage.php'
+<html>
+<body>
+<a href="javascript:window.close()">Close Window</a>
+<a href="
+*** File '(Unnamed)'
+sendmail
+upload_max_filesize
+memory
+memory
+memory
+memory_limit
+
+*** File '(Unnamed)'
+index.php
+index.php
+/tmp/crontab.OIpkkd/crontab
+tables.sql
+getgames.php
+getgames.php
+/etc/lighttpd/lighttpd.conf
+/etc/lighttpd/lighttpd.conf
+config.php
+config.php
+testpage.php
+
+*** These modified files were found in JOE when it aborted on Thu Oct  7 09:40:39 2010
+*** JOE was aborted because the terminal closed
+
+*** File '(Unnamed)'
+sendmail
+upload_max_filesize
+memory
+memory
+memory
+memory_limit
+
+*** File '(Unnamed)'
+loggedin.php
+loggedin.php
+login.php
+login.php
+login.php
+login.php
+login.php
+login.php
+login.php
+game
+gamelist.php
+gamelist.php
+gamelist.php
+gamelist.php
+gamelist.php
+gamelist.php
+
+*** These modified files were found in JOE when it aborted on Sun Nov  7 09:14:36 2010
+*** JOE was aborted by UNIX signal 15
+
+*** File '(Unnamed)'
+sendmail
+upload_max_filesize
+memory
+memory
+memory
+memory_limit
+clothesfor
+drakeapps
+self
+
+*** File '(Unnamed)'
+/etc/lighttpd/lighttpd.conf
+theme.tpl
+main.php
+tutorial.php
+tutorial.php
+tutorial.php
+tutorial.php
+tutorial.php
+tutorial.php
+currentversion.txt
+checkmoves.php
+checkmoves.php
+gamelist.php
+login.php
+gamelist.php
+checkmoves.php
+checkmoves.php
+checkmoves.php
+checkmoves.php
+checkmoves.php

@@ -1,0 +1,169 @@
+<?php
+
+include("config.php");
+include("functions.php");
+
+if(isset($_GET['free'])) {
+	$free = "&free=free";
+	$freemode = true;
+} else {
+	$free = "";
+	$freemode = false;
+}
+
+$req = $mysql->query("SELECT * FROM `devices` WHERE `user` = '".$_GET['user']."' AND `device` = '".$_GET['device']."' LIMIT 1");
+
+if($req->num_rows != 1) {
+  header("Location: login.php");
+}
+
+$user = $_REQUEST['user'];
+$device = $_REQUEST['device'];
+
+$query = "SELECT `users`.`username`, `games`.`id`, `games`.`moves`, `games`.`lasttime`, `games`.`white`, `games`.`whitescore`, `games`.`blackscore` FROM `games`,`users` WHERE ((`white` = '".$user."' AND `turn` = 'white' AND  `games`.`black` =  `users`.`id`) OR (`black` = '".$user."' AND `turn` = 'black' AND  `games`.`white` =  `users`.`id`)) AND `finished` < 1  ORDER BY `games`.`lasttime` DESC";
+
+$yourturn = $mysql->query($query);
+
+$query = "SELECT `users`.`username`, `games`.`id`, `games`.`moves`, `games`.`lasttime`, `games`.`white`, `games`.`whitescore`, `games`.`blackscore` FROM `games`,`users` WHERE ((`white` = '".$user."' AND `turn` = 'black' AND  `games`.`black` =  `users`.`id`) OR (`black` = '".$user."' AND `turn` = 'white' AND  `games`.`white` =  `users`.`id`)) AND `finished` < 1 ORDER BY `games`.`lasttime` DESC";
+
+$otherturn = $mysql->query($query);
+
+//$query = "SELECT `users`.`username`, `games`.`id`, `games`.`moves`, `games`.`lasttime`, `games`.`white`, `games`.`whitescore`, `games`.`blackscore` FROM `games`,`users` WHERE ((`white` = '".$user."' AND `turn` = 'black' AND  `games`.`black` =  `users`.`id`) OR (`black` = '".$user."' AND `turn` = 'white' AND  `games`.`white` =  `users`.`id`)) AND `finished` > 0";
+$query = "SELECT `users`.`username`, `games`.`id`, `games`.`moves`, `games`.`lasttime`, `games`.`white`, `games`.`whitescore`, `games`.`blackscore` FROM `games`,`users` WHERE ((`white` = '".$user."' AND  `games`.`black` =  `users`.`id`) OR (`black` = '".$user."' AND  `games`.`white` =  `users`.`id`)) AND `finished` > 0 ORDER BY `games`.`lasttime` DESC";
+
+$finished = $mysql->query($query);
+
+?>
+<!DOCTYPE html>
+<html>
+<head>
+<!--<link rel="stylesheet" href="style.css" type="text/css" />
+--><link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.css" />
+<script src="http://code.jquery.com/jquery-1.4.3.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.js"></script>
+<script type="text/javascript">
+function choose(id) {
+	window.HTMLOUT.chooseGame(id);
+	window.location = "http://api.drakeapps.com/backgammon/loadgame.php";
+}
+
+</script>
+</head>
+<body>
+<div data-role="page">
+<div data-role="header">
+<a href="gamelist.php?user=<?=$user?>&device=<?=$device?><?=$free?>&time=<?php /* hack to let jQuery keep reloading the page */ echo time(); ?>"  data-icon="refresh" data-role="button" data-inline="true">Refresh</a> 
+<h1>Games</h1>
+<a href="addgame.php?user=<?=$user?>&device=<?=$device?>" data-icon="plus" data-role="button" data-inline="true" >Add Game</a> 
+</div>
+<div data-role="content">
+<ul class="list" data-role="listview">
+<?php if($freemode && false) { ?>
+<li class="game"><a href="market://details?id=com.drakeapps.backgammon" rel="external"><h2>Upgrade to the Full Version</h2></a></li>
+<?php } ?>
+
+<li data-role="list-divider">Your Turn <span class="ui-li-count"><?php echo $yourturn->num_rows; ?></span></li>
+<?php
+
+while($row = $yourturn->fetch_assoc()) {
+  echo "<li class=\"game\">\n";
+  echo "<a href='#' onclick='choose(\"".$row["id"]."\")'>";
+  echo "<h3>".$row["username"]." vs. you</h3>";
+  echo "</a>";
+  echo "<p>";
+  if($row["white"] == $user) {
+  	$yourscore = $row["whitescore"];
+  	$oppscore = $row["blackscore"];
+  } else {
+  	$yourscore = $row["blackscore"];
+  	$oppscore = $row["whitescore"];
+  }
+  echo $row["username"]." - <strong>$oppscore</strong>&nbsp;&nbsp;&nbsp;you - <strong>$yourscore</strong>";
+  echo "</p>\n";
+  echo "<p>Last move ".getTime($row["lasttime"])."</p>\n";
+  echo "<p class=\"ui-li-aside\">".$row["moves"]." moves</p>\n";
+  echo "</li>\n\n";
+
+}
+
+?>
+
+<li data-role="list-divider">Their Turn <span class="ui-li-count"><?php echo $otherturn->num_rows; ?></span></li>
+<?php 
+
+
+
+if($user != 1) {
+while($row = $otherturn->fetch_assoc()) {
+  echo "<li class=\"game\">\n";
+  //echo "<a href='#' onclick='choose(\"".$row["id"]."\")'>";
+  echo "<h3>".$row["username"]." vs. you</h3>";
+  //echo "</a>";
+  echo "<p>";
+  if($row["white"] == $user) {
+  	$yourscore = $row["whitescore"];
+  	$oppscore = $row["blackscore"];
+  } else {
+  	$yourscore = $row["blackscore"];
+  	$oppscore = $row["whitescore"];
+  }
+  echo $row["username"]." - <strong>$oppscore</strong>&nbsp;&nbsp;&nbsp;you - <strong>$yourscore</strong>";
+  echo "</p>\n";
+  echo "<p>Last move ".getTime($row["lasttime"])."</p>\n";
+  echo "<p class=\"ui-li-aside\">".$row["moves"]." moves</p>\n";
+  echo "</li>\n\n";
+
+}
+}
+?>
+
+<li data-role="list-divider">Finished Games (click to start a new game) <span class="ui-li-count"><?php echo $finished->num_rows; ?></span></li>
+
+<?php 
+
+while($row = $finished->fetch_assoc()) {
+ if($row["white"] == $user) {
+  	$yourscore = $row["whitescore"];
+  	$oppscore = $row["blackscore"];
+  } else {
+  	$yourscore = $row["blackscore"];
+  	$oppscore = $row["whitescore"];
+  }
+  
+  echo "<li class=\"game\">\n";
+  echo "<a href=\"addgame.php?user=$user&device=$device&pickuser=".$row['username']."\">";
+  echo "<h3>".$row["username"]." vs. you</h3>";
+  echo "</a>";
+  
+  echo "<p>";
+  if($oppscore == 15) {
+  	echo "<em>";
+  }
+  echo $row["username"]." - <strong>$oppscore</strong>&nbsp;&nbsp;&nbsp;";
+  if($oppscore == 15) {
+  	echo "</em>";
+  }
+  
+  if($yourscore == 15) {
+  	echo "<em>";
+  }
+  echo "you - <strong>$yourscore</strong>";
+  if($yourscore == 15) {
+  	echo "</em>";
+  }
+  
+  echo "</p>\n";
+  echo "<p>Last move ".getTime($row["lasttime"])."</p>\n";
+  echo "<p class=\"ui-li-aside\">".$row["moves"]." moves</p>\n";
+  echo "</li>\n\n";
+
+}
+
+?>
+</ul>
+</div>
+</div>
+</body>
+</html>
+
+

@@ -1,0 +1,7 @@
+<?php
+
+
+$mysqlhost = "localhost";
+$mysqlname = "backgammon";
+$mysqluser = "backgammon";
+$mysqlpass = "npXYe3W4Kdxb5BBL";
